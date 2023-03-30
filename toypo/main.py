@@ -1,3 +1,5 @@
+from logging import getLogger
+
 from fastapi import Depends, FastAPI, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
@@ -5,7 +7,13 @@ from sqlalchemy.exc import IntegrityError
 from . import constants, crud, models, schemas
 from .database import SessionLocal, engine
 
+logger = getLogger(__name__)
+
 if constants.AUTO_MIGRATE:
+    logger.info('Running auto migrations')
+    # @todo would use a real migration tool like
+    # alembic, this only works well from an empty
+    # database.
     models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
