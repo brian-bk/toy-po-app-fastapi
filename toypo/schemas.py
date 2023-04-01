@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import Optional
+# pylint: disable=no-name-in-module,no-self-argument
 from pydantic import BaseModel, PositiveInt
 
 from .models import PurchaseOrderStatus
@@ -14,6 +15,7 @@ class PurchaseOrderCreate(PurchaseOrderBase):
     buyer_id: str
     price_usd: float
     purchase_agreement_id: Optional[int] = None
+
 
 class PurchaseOrderUpdate(PurchaseOrderBase):
     id: PositiveInt
@@ -31,6 +33,7 @@ class PurchaseOrder(PurchaseOrderBase):
 
     class Config:
         orm_mode = True
+
 
 class PurchaseAgreementBase(BaseModel):
     seller_id: str

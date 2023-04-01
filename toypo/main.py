@@ -24,8 +24,9 @@ def get_db():
     try:
         yield db
     except IntegrityError as ie:
-        logger.warning("IntegrityError caught, response will be 400", exc_info=True)
-        raise HTTPException(400, detail=str(ie))
+        logger.warning(
+            "IntegrityError caught, response will be 400", exc_info=True)
+        raise HTTPException(400, detail=str(ie)) from ie
     finally:
         db.close()
 
@@ -35,13 +36,15 @@ def read_purchase_orders(skip: int = 0, limit: int = 100, db: Session = Depends(
     purchase_orders = crud.get_purchase_orders(db, skip=skip, limit=limit)
     return purchase_orders
 
+
 @app.get('/purchase_orders/receive/{purchase_order_id}', response_model=schemas.PurchaseOrder)
 def receive_purchase_order(purchase_order_id: int, db: Session = Depends(get_db)):
     purchase_order_update = schemas.PurchaseOrderUpdate(
         id=purchase_order_id,
         status=models.PurchaseOrderStatus.received,
     )
-    purchase_order = crud.update_purchase_order(db, purchase_order=purchase_order_update)
+    purchase_order = crud.update_purchase_order(
+        db, purchase_order=purchase_order_update)
     return purchase_order
 
 
@@ -52,12 +55,15 @@ def create_purchase_order(
     try:
         crud.create_purchase_order(db=db, purchase_order=purchase_order)
     except ValueError as ve:
-        raise HTTPException(400, detail=str(ve))
+        raise HTTPException(400, detail=str(ve)) from ve
+
 
 @app.get('/purchase_agreements/', response_model=list[schemas.PurchaseAgreement])
 def read_purchase_agreements(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    purchase_agreements = crud.get_purchase_agreements(db, skip=skip, limit=limit)
+    purchase_agreements = crud.get_purchase_agreements(
+        db, skip=skip, limit=limit)
     return purchase_agreements
+
 
 @app.post('/purchase_agreements/', response_model=schemas.PurchaseAgreement)
 def create_purchase_agreement(

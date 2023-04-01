@@ -1,10 +1,12 @@
+# pylint: disable=not-callable
 import enum
 
 from sqlalchemy import Column, DateTime, Enum, Float, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship, validates
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 from .database import Base
+
 
 class PurchaseOrderStatus(enum.StrEnum):
     purchased = 'PURCHASED'
@@ -18,7 +20,8 @@ class PurchaseOrder(Base):
     id = Column(Integer, primary_key=True, index=True)
     seller_id = Column(String, index=True, comment='Seller User ID, external')
     buyer_id = Column(String, index=True, comment='Buyer User ID, external')
-    status = Column(Enum(PurchaseOrderStatus), default=PurchaseOrderStatus.purchased, comment='Status of the PO.')
+    status = Column(Enum(PurchaseOrderStatus),
+                    default=PurchaseOrderStatus.purchased, comment='Status of the PO.')
     purchase_agreement_id = Column(Integer, ForeignKey('purchase_agreements.id'),
                                    nullable=True, comment='Associated purchase agreement, if it exists.')
     price_usd = Column(Float, comment='Price in USD as floating point number')
@@ -27,7 +30,8 @@ class PurchaseOrder(Base):
     # support OOTB. I think it'd be better to ignore while it's not a requirement
     # because any real app wouldn't be using sqlite anyways.
 
-    purchase_agreement = relationship('PurchaseAgreement', back_populates='purchase_orders')
+    purchase_agreement = relationship(
+        'PurchaseAgreement', back_populates='purchase_orders')
 
 
 class PurchaseAgreement(Base):
@@ -38,4 +42,5 @@ class PurchaseAgreement(Base):
     buyer_id = Column(String, index=True, comment='Buyer User ID, external')
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-    purchase_orders = relationship('PurchaseOrder', back_populates='purchase_agreement')
+    purchase_orders = relationship(
+        'PurchaseOrder', back_populates='purchase_agreement')
