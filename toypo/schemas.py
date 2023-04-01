@@ -2,20 +2,31 @@ from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel, PositiveInt
 
+from .models import PurchaseOrderStatus
+
 
 class PurchaseOrderBase(BaseModel):
-    seller_id: str
-    buyer_id: str
-    price_usd: float
+    pass
 
 
 class PurchaseOrderCreate(PurchaseOrderBase):
+    seller_id: str
+    buyer_id: str
+    price_usd: float
     purchase_agreement_id: Optional[int] = None
+
+class PurchaseOrderUpdate(PurchaseOrderBase):
+    id: PositiveInt
+    status: Optional[PurchaseOrderStatus] = None
 
 
 class PurchaseOrder(PurchaseOrderBase):
     id: PositiveInt
+    seller_id: str
+    buyer_id: str
+    price_usd: float
     purchase_agreement_id: Optional[int] = None
+    status: PurchaseOrderStatus
     created_at: datetime
 
     class Config:

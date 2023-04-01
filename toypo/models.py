@@ -1,8 +1,15 @@
-from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
+import enum
+
+from sqlalchemy import Column, DateTime, Enum, Float, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship, validates
 from sqlalchemy.sql import func
 
 from .database import Base
+
+class PurchaseOrderStatus(enum.StrEnum):
+    purchased = 'PURCHASED'
+    received = 'RECEIVED'
+    delivered = 'DELIVERED'
 
 
 class PurchaseOrder(Base):
@@ -11,6 +18,7 @@ class PurchaseOrder(Base):
     id = Column(Integer, primary_key=True, index=True)
     seller_id = Column(String, index=True, comment='Seller User ID, external')
     buyer_id = Column(String, index=True, comment='Buyer User ID, external')
+    status = Column(Enum(PurchaseOrderStatus), default=PurchaseOrderStatus.purchased, comment='Status of the PO.')
     purchase_agreement_id = Column(Integer, ForeignKey('purchase_agreements.id'),
                                    nullable=True, comment='Associated purchase agreement, if it exists.')
     price_usd = Column(Float, comment='Price in USD as floating point number')
@@ -20,6 +28,7 @@ class PurchaseOrder(Base):
     # because any real app wouldn't be using sqlite anyways.
 
     purchase_agreement = relationship('PurchaseAgreement', back_populates='purchase_orders')
+
 
 class PurchaseAgreement(Base):
     __tablename__ = 'purchase_agreements'

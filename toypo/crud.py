@@ -14,6 +14,29 @@ def create_purchase_order(db: Session, purchase_order: schemas.PurchaseOrderCrea
         purchase_agreement_id=purchase_order.purchase_agreement_id,
     )
     db.add(db_purchase_order)
+
+    db.flush()
+    if db_purchase_order.purchase_agreement is not None and \
+            db_purchase_order.purchase_agreement.seller_id != purchase_order.seller_id:
+        raise ValueError('seller_id must match one in the Purchase Agreement')
+    if db_purchase_order.purchase_agreement is not None and \
+            db_purchase_order.purchase_agreement.buyer_id != purchase_order.buyer_id:
+        raise ValueError('buyer_id must match one in the Purchase Agreement')
+
+    db.commit()
+    db.refresh(db_purchase_order)
+    return db_purchase_order
+
+def update_purchase_order(db: Session, purchase_order: schemas.PurchaseOrderUpdate):
+    db_purchase_order = db.query(models.PurchaseOrder).filter(models.PurchaseOrder.id == purchase_order.id).first()
+    if db_purchase_order is None:
+        return None
+    
+    # Update model class variable from requested fields 
+    for var, value in vars(purchase_order).items():
+        if value is not None:
+            setattr(db_purchase_order, var, value)
+
     db.commit()
     db.refresh(db_purchase_order)
     return db_purchase_order
