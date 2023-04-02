@@ -38,6 +38,15 @@ def read_purchase_orders(skip: int = 0, limit: int = 100, db: Session = Depends(
     return purchase_orders
 
 
+@app.get('/purchase_orders/{purchase_order_id}', response_model=schemas.PurchaseOrder)
+def read_purchase_orders(purchase_order_id, db: Session = Depends(get_db)):
+    db_purchase_order = crud.get_purchase_order(
+        db, purchase_order_id=purchase_order_id)
+    if db_purchase_order is None:
+        raise HTTPException(status_code=404, detail='Purchase Order not found')
+    return db_purchase_order
+
+
 @app.post('/purchase_orders/receive/{purchase_order_id}', response_model=schemas.PurchaseOrder)
 def receive_purchase_order(purchase_order_id: int, db: Session = Depends(get_db)):
     purchase_order_update = schemas.PurchaseOrderUpdate(
@@ -57,6 +66,16 @@ def create_purchase_order(
         return crud.create_purchase_order(db=db, purchase_order=purchase_order)
     except ValueError as ve:
         raise HTTPException(400, detail=str(ve)) from ve
+
+
+@app.get('/purchase_agreements/{purchase_agreement_id}', response_model=schemas.PurchaseAgreement)
+def read_purchase_purchase_agreement(purchase_agreement_id, db: Session = Depends(get_db)):
+    db_purchase_agreement = crud.get_purchase_agreement(
+        db, purchase_agreement_id=purchase_agreement_id)
+    if db_purchase_agreement is None:
+        raise HTTPException(
+            status_code=404, detail='Purchase Agreement not found')
+    return db_purchase_agreement
 
 
 @app.get('/purchase_agreements/', response_model=list[schemas.PurchaseAgreement])

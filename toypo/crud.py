@@ -3,6 +3,10 @@ from sqlalchemy.orm import Session
 from . import models, schemas
 
 
+def get_purchase_order(db: Session, purchase_order_id: int):
+    return db.query(models.PurchaseOrder).filter(models.PurchaseOrder.id == purchase_order_id).first()
+
+
 def get_purchase_orders(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.PurchaseOrder).offset(skip).limit(limit).all()
 
@@ -43,6 +47,10 @@ def update_purchase_order(db: Session, purchase_order: schemas.PurchaseOrderUpda
     db.commit()
     db.refresh(db_purchase_order)
     return db_purchase_order
+
+
+def get_purchase_agreement(db: Session, purchase_agreement_id: int):
+    return db.query(models.PurchaseAgreement).filter(models.PurchaseOrder.id == purchase_agreement_id).first()
 
 
 def get_purchase_agreements(db: Session, skip: int = 0, limit: int = 100):
