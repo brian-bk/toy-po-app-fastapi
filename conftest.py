@@ -3,6 +3,7 @@ import os
 import pytest
 
 from toypo.database import SessionLocal
+from toypo.inventory import item_inventory
 from toypo.main import auto_migrate
 
 db = SessionLocal()
@@ -28,3 +29,11 @@ def clean_db():
     auto_migrate()
     yield
     os.remove(db.connection().engine.url.translate_connect_args()['database'])
+
+
+@pytest.fixture(autouse=True)
+def clean_inventory():
+    """Clean Item Inventory between tests
+    """
+    item_inventory._init_example_storage()
+    yield

@@ -13,6 +13,8 @@ def test_create_basic_purchase_order_and_receive_it():
     new_po_response = client.post('/purchase_orders', json={
         'seller_id': 'seller123',
         'buyer_id': 'buyer123',
+        'item_id': 'item1',
+        'item_quantity': 3,
         'price_usd': 350.5,
     })
     assert new_po_response.status_code == 200
