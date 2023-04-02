@@ -13,6 +13,8 @@ class PurchaseOrderBase(BaseModel):
 class PurchaseOrderCreate(PurchaseOrderBase):
     seller_id: str
     buyer_id: str
+    item_id: str
+    item_quantity: int
     price_usd: float
     purchase_agreement_id: Optional[int] = None
 
@@ -26,6 +28,8 @@ class PurchaseOrder(PurchaseOrderBase):
     id: PositiveInt
     seller_id: str
     buyer_id: str
+    item_id: str
+    item_quantity: int
     price_usd: float
     purchase_agreement_id: Optional[int] = None
     status: PurchaseOrderStatus
@@ -38,6 +42,9 @@ class PurchaseOrder(PurchaseOrderBase):
 class PurchaseAgreementBase(BaseModel):
     seller_id: str
     buyer_id: str
+    item_id: str
+    item_quantity: int
+    price_usd: float
 
 
 class PurchaseAgreementCreate(PurchaseAgreementBase):
