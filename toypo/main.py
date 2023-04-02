@@ -9,13 +9,6 @@ from .database import SessionLocal, engine
 
 logger = getLogger(__name__)
 
-if constants.AUTO_MIGRATE:
-    logger.info('Running auto migrations')
-    # @todo would use a real migration tool like
-    # alembic, this only works well from an empty
-    # database.
-    models.Base.metadata.create_all(bind=engine)
-
 app = FastAPI()
 
 
@@ -31,13 +24,21 @@ def get_db():
         db.close()
 
 
+def auto_migrate():
+    logger.info('Running auto migrations')
+    # @todo would use a real migration tool like
+    # alembic, this only works well from an empty
+    # database.
+    models.Base.metadata.create_all(bind=engine)
+
+
 @app.get('/purchase_orders/', response_model=list[schemas.PurchaseOrder])
 def read_purchase_orders(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     purchase_orders = crud.get_purchase_orders(db, skip=skip, limit=limit)
     return purchase_orders
 
 
-@app.get('/purchase_orders/receive/{purchase_order_id}', response_model=schemas.PurchaseOrder)
+@app.post('/purchase_orders/receive/{purchase_order_id}', response_model=schemas.PurchaseOrder)
 def receive_purchase_order(purchase_order_id: int, db: Session = Depends(get_db)):
     purchase_order_update = schemas.PurchaseOrderUpdate(
         id=purchase_order_id,
@@ -53,7 +54,7 @@ def create_purchase_order(
     purchase_order: schemas.PurchaseOrderCreate, db: Session = Depends(get_db)
 ):
     try:
-        crud.create_purchase_order(db=db, purchase_order=purchase_order)
+        return crud.create_purchase_order(db=db, purchase_order=purchase_order)
     except ValueError as ve:
         raise HTTPException(400, detail=str(ve)) from ve
 
@@ -70,3 +71,7 @@ def create_purchase_agreement(
     purchase_agreement: schemas.PurchaseAgreementCreate, db: Session = Depends(get_db)
 ):
     return crud.create_purchase_agreement(db=db, purchase_agreement=purchase_agreement)
+
+
+if constants.AUTO_MIGRATE:
+    auto_migrate()

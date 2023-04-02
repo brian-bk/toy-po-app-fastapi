@@ -13,10 +13,15 @@ uvicorn = "*"
 [dev-packages]
 autopep8 = "*"
 pylint = "*"
+httpx = "*"
+pytest = "*"
+pytest-env = "*"
 
 [requires]
 python_version = "3.11"
 
 [scripts]
+app = "uvicorn toypo.main:app --reload"
 autoformat = "autopep8 --in-place --recursive toypo"
 lint = "pylint toypo"
+test = "pytest"
