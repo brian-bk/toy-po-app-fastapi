@@ -1,3 +1,8 @@
+"""Environment Constants
+
+Will load from the .env file, but existing environment variables
+will override settings from that file.
+"""
 import os
 from dotenv import load_dotenv
 

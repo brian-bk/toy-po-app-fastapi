@@ -1,3 +1,5 @@
+"""Tests on general FastAPI application
+"""
 from fastapi.testclient import TestClient
 
 from .main import app
@@ -6,6 +8,10 @@ client = TestClient(app)
 
 
 def test_create_basic_purchase_order_and_receive_it():
+    """Create a basic PO and receive it
+
+    Basically the most basic "happy" path.
+    """
     initial_state = client.get("/purchase_orders/")
     assert initial_state.status_code == 200
     assert initial_state.json() == []

@@ -4,7 +4,7 @@ import pytest
 
 from toypo.database import SessionLocal
 from toypo.inventory import item_inventory
-from toypo.main import auto_migrate
+from toypo.main import _auto_migrate
 
 db = SessionLocal()
 
@@ -26,7 +26,7 @@ def clean_db():
     It would be better to just remove data/tables,
     or roll back each transaction between tests.
     """
-    auto_migrate()
+    _auto_migrate()
     yield
     os.remove(db.connection().engine.url.translate_connect_args()['database'])
 
