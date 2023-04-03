@@ -1,4 +1,4 @@
-"""CRUD (Create, Remove, Update, Delete) operations
+"""CRUD (Create, Read, Update, Delete) operations
 
 Our CRUD module manages how operations to objects
 in our database should be handled. SQL models
