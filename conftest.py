@@ -2,11 +2,9 @@ import os
 
 import pytest
 
-from toypo.database import SessionLocal
+from toypo.database import Base, SessionLocal
 from toypo.inventory import item_inventory
 from toypo.main import _auto_migrate
-
-db = SessionLocal()
 
 
 SQL_ALCHEMY_URL = os.environ['SQL_ALCHEMY_URL']
@@ -20,13 +18,19 @@ if 'test' not in SQL_ALCHEMY_URL:
 def clean_db():
     """Clean DB between tests
 
-    This is rather inefficient for a lot of tests but
-    fine for now.
-
-    It would be better to just remove data/tables,
-    or roll back each transaction between tests.
+    Wipe out tables entirely
     """
+    db = SessionLocal()
     _auto_migrate()
+    yield
+    Base.metadata.drop_all(db.connection().engine)
+
+
+@pytest.fixture(autouse=True, scope='session')
+def remove_db():
+    """Remove DB at end of session
+    """
+    db = SessionLocal()
     yield
     os.remove(db.connection().engine.url.translate_connect_args()['database'])
 
