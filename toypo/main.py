@@ -79,7 +79,7 @@ def read_purchase_order(
     purchase_order_id: int,
     db: Session = Depends(get_db)
 ):
-    """Reac a single PO
+    """Read a single PO
     """
     db_purchase_order = crud.get_purchase_order(
         db, purchase_order_id=purchase_order_id)
@@ -115,6 +115,12 @@ def receive_purchase_order(
 
     item_id: str = db_purchase_order.item_id  # type: ignore
     item_quantity: int = db_purchase_order.item_quantity  # type: ignore
+    # This inventory operations "claims" items from 'purchased' before
+    # dropping them in received.
+    # If a failure happens, item inventory will try to reset the
+    # inventory back to 'purchased' state.
+    #
+    # See transact_item_storage class for more details
     with item_inventory.transact_item_storage(item_id, 'purchased', 'received', item_quantity):
         crud.update_purchase_order(
             db, purchase_order=purchase_order_update)
