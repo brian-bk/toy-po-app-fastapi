@@ -16,6 +16,7 @@ pylint = "*"
 httpx = "*"
 pytest = "*"
 pytest-env = "*"
+mypy = "*"
 
 [requires]
 python_version = "3.11"
