@@ -74,3 +74,17 @@ FastAPI builds and serves these OpenAPI docs as a
 first-class feature of the service, and documentation
 is shown by default. This works well for internal services,
 but external services would require better authentication.
+
+To see the code which aligns with the OpenAPI documentation,
+go to toypo/main.py first. There is all the application
+endpoints that we handle with our FastAPI application.
+
+## Item Inventory
+
+So I went with a super quick-and-dirty item inventory,
+you can view it at ./toypo/inventory.py. The reason
+it's so basic (and contains stubbed data, directly
+in the module!) is that I'm assuming the real item
+inventory exists elsewhere. So I built it as minimal
+as possible, while still providing the functionality needed
+for Purchase Order operations.
